@@ -28,7 +28,7 @@ export class MailService {
   }
 
   async sendPasswordResetLink(email: string, code: string) {
-    const resetLink = `https://yourapp.com/reset-password?code=${code}&email=${email}`;
+    const resetLink = `https://checkapp.kz/auth/password-confirm?code=${code}&email=${email}`;
     const mailOptions = {
       from: 'batrbekk@gmail.com',
       to: email,
