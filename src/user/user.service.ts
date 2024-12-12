@@ -1,11 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './user.schema';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private jwtService: JwtService,
+  ) {}
 
   // 1. Получение всех пользователей
   async getUsers(): Promise<User[]> {
@@ -51,6 +59,7 @@ export class UserService {
     return user;
   }
 
+  // 4. Обновления пользователя
   async updateUser(id: string, update: Partial<User>): Promise<User> {
     const user = await this.userModel
       .findByIdAndUpdate(id, update, { new: true })
@@ -61,8 +70,36 @@ export class UserService {
     return user;
   }
 
-  // 4. Фильтрация по ID (можно добавить свою логику фильтрации)
+  // 5. Фильтрация по ID (можно добавить свою логику фильтрации)
   async filterUsersById(ids: string[]): Promise<User[]> {
     return this.userModel.find({ _id: { $in: ids } }).exec();
+  }
+
+  // 6. Получение данных текущего пользователя по JWT токену
+  async getCurrentUserByToken(token: string): Promise<User> {
+    if (!token) {
+      throw new ForbiddenException('Токен не предоставлен');
+    }
+
+    let decodedToken: { id: any };
+    try {
+      // Декодирование токена
+      decodedToken = this.jwtService.verify(token);
+    } catch {
+      throw new ForbiddenException('Неверный или просроченный токен');
+    }
+
+    const userId = decodedToken.id;
+    if (!userId) {
+      throw new ForbiddenException('Некорректный токен');
+    }
+
+    // Получение пользователя из базы данных по ID из токена
+    const user = await this.userModel.findById(userId).exec();
+    if (!user) {
+      throw new NotFoundException(`Пользователь с ID ${userId} не найден`);
+    }
+
+    return user;
   }
 }

@@ -1,14 +1,5 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Delete,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, Delete, Query, Req } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from '../auth/roles.guard';
 
 @Controller('users')
 export class UserController {
@@ -22,9 +13,14 @@ export class UserController {
 
   // 2. Получение конкретного пользователя по ID
   @Get(':id')
-  @UseGuards(RolesGuard)
-  @Roles('admin', 'superAdmin')
-  async getUserById(@Param('id') id: string) {
+  async getUserById(@Param('id') id: string, @Req() request: Request) {
+    if (id === 'me') {
+      const authHeader = request.headers['authorization'];
+      const token = authHeader?.split(' ')[1];
+      return this.userService.getCurrentUserByToken(token);
+    }
+
+    // Если это не 'me', то обрабатываем как обычный ID
     return this.userService.getUserById(id);
   }
 
