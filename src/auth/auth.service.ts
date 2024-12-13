@@ -79,7 +79,11 @@ export class AuthService {
     }
 
     const code = randomInt(100000, 999999).toString();
-    await this.mailService.sendPasswordResetLink(email, code);
+    await this.mailService.sendPasswordResetLink(
+      email,
+      code,
+      user.id.toString(),
+    );
 
     // Сохраняем код для восстановления пароля в базе данных
     await this.userService.updateUser(user.id.toString(), {

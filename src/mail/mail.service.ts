@@ -27,8 +27,8 @@ export class MailService {
     await this.transporter.sendMail(mailOptions);
   }
 
-  async sendPasswordResetLink(email: string, code: string) {
-    const resetLink = `https://checkapp.kz/auth/password-confirm?code=${code}&email=${email}`;
+  async sendPasswordResetLink(email: string, code: string, user_id: string) {
+    const resetLink = `https://checkapp.kz/password-confirm?code=${code}&email=${email}&id=${user_id}`;
     const mailOptions = {
       from: 'batrbekk@gmail.com',
       to: email,
