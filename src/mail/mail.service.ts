@@ -37,4 +37,14 @@ export class MailService {
     };
     await this.transporter.sendMail(mailOptions);
   }
+
+  async sendContactFromPartner(name: string, email: string, message: string) {
+    const mailOptions = {
+      from: 'batrbekk@gmail.com',
+      to: 'batrbekk@gmail.com',
+      subject: 'Сообщение от клиента',
+      text: `Запрос на партнерство от ${name}, почта: ${email}, письмо: ${message}`,
+    };
+    await this.transporter.sendMail(mailOptions);
+  }
 }
