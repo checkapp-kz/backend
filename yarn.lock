@@ -1434,6 +1434,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/multer@npm:^1.4.12":
+  version: 1.4.12
+  resolution: "@types/multer@npm:1.4.12"
+  dependencies:
+    "@types/express": "*"
+  checksum: 719cacf88ec83ed77e250e45bee830fd7a505323825efa2a2c1144f5f3d7d36e67408ec988e571bcbaa571e0c214b5ede42d57ebb0f9b453a5eb8faba8ff12d0
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 22.10.2
   resolution: "@types/node@npm:22.10.2"
@@ -2525,6 +2534,7 @@ __metadata:
     "@types/bcryptjs": ^2.4.6
     "@types/express": ^5.0.0
     "@types/jest": ^29.5.2
+    "@types/multer": ^1.4.12
     "@types/node": ^20.3.1
     "@types/nodemailer": ^6.4.17
     "@types/passport-jwt": ^4.0.1
@@ -2538,6 +2548,7 @@ __metadata:
     eslint-plugin-prettier: ^5.0.0
     jest: ^29.5.0
     mongoose: ^8.8.4
+    multer: ^1.4.5-lts.1
     nodemailer: ^6.9.16
     passport: ^0.7.0
     passport-jwt: ^4.0.1
@@ -5622,6 +5633,21 @@ __metadata:
     type-is: ^1.6.4
     xtend: ^4.0.0
   checksum: da04b06efdbff9bd42d9f71297eeb2c0566231a4b9c895f49479c09b163c5e404aa6e58bd1c19f006f82e2114362545e39cbf7e0163ffd8d73d0f88adf4489e2
+  languageName: node
+  linkType: hard
+
+"multer@npm:^1.4.5-lts.1":
+  version: 1.4.5-lts.1
+  resolution: "multer@npm:1.4.5-lts.1"
+  dependencies:
+    append-field: ^1.0.0
+    busboy: ^1.0.0
+    concat-stream: ^1.5.2
+    mkdirp: ^0.5.4
+    object-assign: ^4.1.1
+    type-is: ^1.6.4
+    xtend: ^4.0.0
+  checksum: d6dfa78a6ec592b74890412f8962da8a87a3dcfe20f612e039b735b8e0faa72c735516c447f7de694ee0d981eb0a1b892fb9e2402a0348dc6091d18c38d89ecc
   languageName: node
   linkType: hard
 

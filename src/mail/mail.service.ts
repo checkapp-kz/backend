@@ -17,6 +17,20 @@ export class MailService {
     });
   }
 
+  async sendMail(mailOptions: {
+    to: string;
+    subject: string;
+    text: string;
+    attachments: any[];
+  }) {
+    const mailOptionsWithDefaults = {
+      from: 'your-email@gmail.com', // Укажи свой email
+      ...mailOptions,
+    };
+
+    await this.transporter.sendMail(mailOptionsWithDefaults);
+  }
+
   async sendOtp(email: string, otp: string) {
     const mailOptions = {
       from: 'batrbekk@gmail.com',
