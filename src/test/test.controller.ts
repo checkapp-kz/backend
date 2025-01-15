@@ -43,12 +43,7 @@ export class TestController {
       testType: TestType;
     },
   ) {
-    return this.testService.saveTest(
-      body.userId,
-      body.answers,
-      PaymentStatus['NOT-PAYMENT'],
-      body.testType,
-    );
+    return this.testService.saveTest(body.userId, body.answers, body.testType);
   }
 
   @Patch('update-payment-status/:testId')

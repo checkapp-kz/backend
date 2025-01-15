@@ -31,19 +31,16 @@ export class TestService {
   ) {}
 
   // Сохранить тест с ответами
-  async saveTest(
-    userId: string,
-    answers: any,
-    status: PaymentStatus,
-    testType: TestType,
-  ) {
-    return await this.testModel.create({
+  async saveTest(userId: string, answers: any, testType: TestType) {
+    const test = await this.testModel.create({
       userId,
       answers,
-      status,
+      status: PaymentStatus.NOT_PAYMENT,
       testType,
       pdfTemplate: this.pdfTemplates[testType],
     });
+
+    return test;
   }
 
   async updatePaymentStatus(testId: string, status: PaymentStatus) {
@@ -194,14 +191,13 @@ export class TestService {
   }
 
   async getTestsByUserId(userId: string) {
-    // Проверяем, является ли userId валидным ObjectId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new NotFoundException('Invalid user ID format');
     }
 
     const tests = await this.testModel
       .find({ userId })
-      .select('testType status createdAt -_id -answers -userId -pdfTemplate -__v')
+      .select('testType status createdAt -_id')
       .sort({ createdAt: -1 })
       .exec();
 
