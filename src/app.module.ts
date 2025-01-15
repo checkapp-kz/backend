@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { PartnerModule } from './partner/partner.module';
 import { TestModule } from './test/test.module';
 import { FaqModule } from './faq/faq.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { FaqModule } from './faq/faq.module';
     PartnerModule,
     TestModule,
     FaqModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],
