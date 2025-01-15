@@ -1,5 +1,5 @@
 // src/test/test.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Test } from './test.model';
@@ -9,6 +9,11 @@ import { PaymentStatus } from './enums/payment-status.enum';
 import { TestType } from './enums/test-type.enum';
 import { MaleCheckupRecommendations } from './interfaces/male-checkup.interface';
 import { PdfGeneratorService } from './services/pdf-generator.service';
+import mongoose from 'mongoose';
+
+interface PopulatedUser extends User {
+  _id: string;
+}
 
 @Injectable()
 export class TestService {
@@ -189,10 +194,41 @@ export class TestService {
   }
 
   async getTestsByUserId(userId: string) {
-    const tests = await this.testModel.find({ userId }).exec();
-    if (!tests || tests.length === 0) {
-      throw new Error('No tests found for this user');
+    // Проверяем, является ли userId валидным ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      throw new NotFoundException('Invalid user ID format');
     }
-    return tests;
+
+    const tests = await this.testModel
+      .find({ userId })
+      .select('testType status createdAt -_id -answers -userId -pdfTemplate -__v')
+      .sort({ createdAt: -1 })
+      .exec();
+
+    if (!tests || tests.length === 0) {
+      throw new NotFoundException('No tests found for this user');
+    }
+
+    return tests.map((test) => ({
+      testType: test.testType,
+      status: test.status,
+      createdAt: test.createdAt,
+    }));
+  }
+
+  async getAllTests() {
+    const tests = await this.testModel
+      .find()
+      .populate<{ userId: PopulatedUser }>('userId', 'name')
+      .select('testType status createdAt')
+      .sort({ createdAt: -1 })
+      .exec();
+
+    return tests.map((test) => ({
+      testType: test.testType,
+      status: test.status,
+      userName: test.userId.name,
+      createdAt: test.createdAt,
+    }));
   }
 }

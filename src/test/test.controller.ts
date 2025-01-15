@@ -18,9 +18,9 @@ import { TestType } from './enums/test-type.enum';
 export class TestController {
   constructor(private readonly testService: TestService) {}
 
-  // для отправки PDF по email
+  // PDF endpoints
   @Post('send-pdf')
-  @UseInterceptors(FileInterceptor('file')) // Используем FileInterceptor для загрузки файла
+  @UseInterceptors(FileInterceptor('file'))
   async sendPdf(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: { to: string; subject: string; text: string },
@@ -28,16 +28,12 @@ export class TestController {
     if (!file) {
       throw new Error('No file uploaded');
     }
-
-    // Получаем данные из body (получатель, тема письма, текст письма)
     const { to, subject, text } = body;
-
-    // Вызываем метод из TestService для отправки PDF
     await this.testService.sendPdfByEmail(to, subject, text, file.buffer);
-
     return { message: 'PDF sent successfully' };
   }
 
+  // Test management endpoints
   @Post('save')
   async saveTest(
     @Body()
@@ -55,7 +51,7 @@ export class TestController {
     );
   }
 
-  @Patch(':testId/update-payment-status')
+  @Patch('update-payment-status/:testId')
   async updatePaymentStatus(@Param('testId') testId: string) {
     const updatedTest = await this.testService.updatePaymentStatus(
       testId,
@@ -67,7 +63,13 @@ export class TestController {
     };
   }
 
-  @Get(':userId')
+  // Test retrieval endpoints
+  @Get('tests')
+  async getAllTests() {
+    return this.testService.getAllTests();
+  }
+
+  @Get('user-tests/:userId')
   async getTestsByUserId(@Param('userId') userId: string) {
     return this.testService.getTestsByUserId(userId);
   }
