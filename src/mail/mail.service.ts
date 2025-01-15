@@ -61,4 +61,18 @@ export class MailService {
     };
     await this.transporter.sendMail(mailOptions);
   }
+
+  async sendFaqQuestionFromClient(clientEmail: string, description: string) {
+    const mailOptions = {
+      from: 'batrbekk@gmail.com',
+      to: 'batrbekk@gmail.com',
+      subject: 'Вопрос FAQ от клиента',
+      text: `
+Новый вопрос для FAQ:
+От: ${clientEmail}
+Вопрос: ${description}
+      `,
+    };
+    await this.transporter.sendMail(mailOptions);
+  }
 }

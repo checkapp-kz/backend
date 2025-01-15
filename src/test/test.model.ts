@@ -1,5 +1,7 @@
 // src/test/test.model.ts
 import mongoose, { Schema, Document } from 'mongoose';
+import { PaymentStatus } from './enums/payment-status.enum';
+import { TestType } from './enums/test-type.enum';
 
 // Интерфейс для ответа
 export interface Answer {
@@ -9,10 +11,12 @@ export interface Answer {
 
 // Интерфейс для теста
 export interface Test extends Document {
-  test: string;
   answers: Answer[];
-  userId: mongoose.Schema.Types.ObjectId; // Тип ObjectId для поля userId
+  userId: mongoose.Schema.Types.ObjectId;
   createdAt: Date;
+  status: PaymentStatus;
+  testType: TestType;
+  pdfTemplate: string; // путь к шаблону PDF для конкретного типа теста
 }
 
 // Схема ответа
@@ -23,11 +27,24 @@ const AnswerSchema = new Schema<Answer>({
 
 // Схема теста
 export const TestSchema = new Schema<Test>({
-  test: { type: String, required: true },
   answers: { type: [AnswerSchema], required: true },
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   createdAt: { type: Date, default: Date.now },
+  status: {
+    type: String,
+    enum: PaymentStatus,
+    default: PaymentStatus['NOT-PAYMENT'],
+  },
+  testType: {
+    type: String,
+    enum: TestType,
+    required: true,
+  },
+  pdfTemplate: {
+    type: String,
+    required: true,
+  },
 });
 
 // Модель теста
-export const TestModel = mongoose.model<Test>('Test', TestSchema); // Создание модели Test
+export const TestModel = mongoose.model<Test>('Test', TestSchema);

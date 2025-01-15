@@ -7,9 +7,12 @@ import {
   Param,
   UseInterceptors,
   UploadedFile,
+  Patch,
 } from '@nestjs/common';
 import { TestService } from './test.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { PaymentStatus } from './enums/payment-status.enum';
+import { TestType } from './enums/test-type.enum';
 
 @Controller('test')
 export class TestController {
@@ -36,8 +39,32 @@ export class TestController {
   }
 
   @Post('save')
-  async saveTest(@Body() body: { userId: string; test: string; answers: any }) {
-    return this.testService.saveTest(body.userId, body.test, body.answers);
+  async saveTest(
+    @Body()
+    body: {
+      userId: string;
+      answers: any;
+      testType: TestType;
+    },
+  ) {
+    return this.testService.saveTest(
+      body.userId,
+      body.answers,
+      PaymentStatus['NOT-PAYMENT'],
+      body.testType,
+    );
+  }
+
+  @Patch(':testId/update-payment-status')
+  async updatePaymentStatus(@Param('testId') testId: string) {
+    const updatedTest = await this.testService.updatePaymentStatus(
+      testId,
+      PaymentStatus.PAYMENT,
+    );
+    return {
+      message: 'Payment status updated and test sent to email',
+      test: updatedTest,
+    };
   }
 
   @Get(':userId')

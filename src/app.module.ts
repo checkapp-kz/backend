@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { PartnerModule } from './partner/partner.module';
 import { TestModule } from './test/test.module';
+import { FaqModule } from './faq/faq.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TestModule } from './test/test.module';
     AuthModule,
     PartnerModule,
     TestModule,
+    FaqModule,
   ],
   controllers: [AppController],
   providers: [AppService],
