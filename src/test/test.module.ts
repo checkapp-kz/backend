@@ -15,5 +15,6 @@ import { PdfGeneratorService } from './services/pdf-generator.service';
   ],
   providers: [TestService, MailService, PdfGeneratorService],
   controllers: [TestController],
+  exports: [TestService], // Экспортируем TestService
 })
 export class TestModule {}

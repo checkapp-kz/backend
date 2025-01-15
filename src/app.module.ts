@@ -8,6 +8,7 @@ import { PartnerModule } from './partner/partner.module';
 import { TestModule } from './test/test.module';
 import { FaqModule } from './faq/faq.module';
 import { ReviewModule } from './review/review.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ReviewModule } from './review/review.module';
     TestModule,
     FaqModule,
     ReviewModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
