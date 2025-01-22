@@ -1,43 +1,71 @@
 import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
+import fetch from 'node-fetch';
 
 @Injectable()
 export class PaymentService {
   private readonly SECRET_KEY = '9d6b69cbb0f4ea06ed969f34b68de9cb';
-  private readonly MERCHANT_ID = 'BCC KZ';
-  private readonly TERMINAL_ID = '88888881 MAC';
-  private readonly MERCHANT_NAME = 'BCC KZ';
+  private readonly MERCHANT_ID = '00000001';
+  private readonly TERMINAL_ID = '88888881';
+  private readonly MERCHANT_NAME = 'TOO "MERCHANT"';
 
-  generatePaymentLink(amount: number, orderId: string): string {
-    const timestamp = '202412100611:36';
-    const nonce = '91B635587254B2B9D8DC8B7C497AD870C';
+  async generatePaymentLink(amount: number, orderId: string): Promise<string> {
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/[-:]/g, '')
+      .replace(/T/, '')
+      .replace(/\..+/, '');
+    const nonce = crypto.randomBytes(16).toString('hex').toUpperCase();
 
-    const params = new URLSearchParams({
-      AMOUNT: amount.toString(),
-      CURRENCY: 'KZT',
-      ORDER: orderId,
-      DESC: 'TRTYPE=1 test transaction',
-      MERCHANT: this.MERCHANT_ID,
-      MERCH_NAME: this.MERCHANT_NAME,
-      TERMINAL: this.TERMINAL_ID,
-      TIMESTAMP: timestamp,
-      MERCH_GMT: '6',
-      TRTYPE: '1',
-      BACKREF:
-        'https://test3ds.bcc.kz:5445/test/CamTestPages/webview/type1webview.html',
-      LANG: 'ru',
-      NONCE: nonce,
-      MERCH_RN_ID: 'C141FFBA75464506',
-      MK_TOKEN: 'MERCH',
-    });
+    const urlencoded = new URLSearchParams();
+    urlencoded.append('AMOUNT', amount.toString());
+    urlencoded.append('CURRENCY', '398');
+    urlencoded.append('ORDER', orderId);
+    urlencoded.append('MERCH_RN_ID', orderId);
+    urlencoded.append(
+      'DESC',
+      'TRTYPE=1 test transaction (Challenge Flow + Fingerprint)',
+    );
+    urlencoded.append('MERCHANT', this.MERCHANT_ID);
+    urlencoded.append('MERCH_NAME', this.MERCHANT_NAME);
+    urlencoded.append('TERMINAL', this.TERMINAL_ID);
+    urlencoded.append('TIMESTAMP', timestamp);
+    urlencoded.append('MERCH_GMT', '+6');
+    urlencoded.append('TRTYPE', '1');
+    urlencoded.append(
+      'BACKREF',
+      'https://merchantdomain.kz/back/to/merchant/site',
+    );
+    urlencoded.append('LANG', 'ru');
+    urlencoded.append('NONCE', nonce);
+    urlencoded.append('P_SIGN', '');
+    urlencoded.append('MK_TOKEN', 'MERCH');
+    urlencoded.append(
+      'NOTIFY_URL',
+      'https://merchantdomain.kz:443/url/notify/callback',
+    );
+    urlencoded.append('CLIENT_IP', '0.0.0.0');
+    urlencoded.append('M_INFO', this.generateMInfo());
 
-    params.append('P_SIGN', '57C2D9D363D6AAA70371539FF63521CF278F718290');
+    const requestOptions = {
+      method: 'POST',
+      body: urlencoded,
+      redirect: 'follow' as RequestRedirect,
+    };
 
-    return `https://test3ds.bcc.kz:5445/cgi-bin/cgi_link?${params.toString()}`;
+    try {
+      const response = await fetch(
+        'https://test3ds.bcc.kz:5445/cgi-bin/cgi_link',
+        requestOptions,
+      );
+      return await response.text();
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Failed to generate payment link');
+    }
   }
 
   private generateMInfo(): string {
-    // Базовая информация о браузере/устройстве
     const mInfo = {
       browserScreenHeight: '1920',
       browserScreenWidth: '1080',

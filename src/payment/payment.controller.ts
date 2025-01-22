@@ -12,13 +12,13 @@ export class PaymentController {
 
   @Post('create-payment')
   async createPayment(@Body() body: { testId: string; amount: number }) {
-    const orderId = `TEST_${body.testId}_${Date.now()}`; // Генерируем уникальный orderId
-    const paymentLink = this.paymentService.generatePaymentLink(
+    const orderId = `TEST_${body.testId}_${Date.now()}`;
+    const paymentResponse = await this.paymentService.generatePaymentLink(
       body.amount,
       orderId,
     );
 
-    return { paymentLink };
+    return { paymentResponse };
   }
 
   @Post('success-callback')
