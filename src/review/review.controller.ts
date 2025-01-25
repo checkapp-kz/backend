@@ -6,12 +6,15 @@ import {
   Param,
   Delete,
   Patch,
+  Logger,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 
 @Controller('reviews')
 export class ReviewController {
+  private readonly logger = new Logger(ReviewController.name);
+
   constructor(private readonly reviewService: ReviewService) {}
 
   // Создание нового отзыва (только для авторизованных пользователей)
