@@ -32,7 +32,13 @@ export class TestService {
 
   // Сохранить тест с ответами
   async saveTest(userId: string, answers: any, testType: TestType) {
+    // Генерируем 8-значный числовой ID
+    const numericId = Math.floor(
+      10000000 + Math.random() * 90000000,
+    ).toString();
+
     const test = await this.testModel.create({
+      _id: numericId, // Устанавливаем числовой ID
       userId,
       answers,
       status: PaymentStatus.NOT_PAYMENT,

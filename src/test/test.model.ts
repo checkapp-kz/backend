@@ -27,6 +27,7 @@ const AnswerSchema = new Schema<Answer>({
 
 // Схема теста
 export const TestSchema = new Schema<Test>({
+  _id: { type: String },
   answers: { type: [AnswerSchema], required: true },
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   createdAt: { type: Date, default: Date.now },
