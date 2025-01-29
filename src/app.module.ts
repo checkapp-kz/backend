@@ -13,10 +13,7 @@ import { PaymentModule } from './payment/payment.module';
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb+srv://batrbekk:kbekbe031198@main.7lggi.mongodb.net/?retryWrites=true&w=majority&appName=Main',
-      {
-        dbName: 'checkapp',
-      },
+      process.env.DATABASE_MONGO_URI || 'mongodb://checkapp:checkapp@localhost:27017/checkapp?authSource=checkapp',
     ),
     UserModule,
     AuthModule,
